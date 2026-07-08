@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Julieta, ábreme… ✨</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF3E7; --cream2:#F6E7D4; --ink:#5A4632; --soft:#93795C;
+    --rose:#E58B93; --rose-deep:#D06974; --leaf:#8FB88A; --sky:#A8CFE0;
+    --gold:#E9B44C; --shadow:rgba(90,70,50,.16);
+    /* color del perrito (cambia en vivo) */
+    --dog:#C9884E; --dog-dark:#A96C38; --dog-ear:#8C5528;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    font-family:'Nunito',sans-serif;color:var(--ink);
+    background:
+      radial-gradient(1200px 700px at 50% -8%, #FFFBF4, transparent 60%),
+      radial-gradient(900px 600px at 108% 110%, #F4E0CB, transparent 55%),
+      var(--cream);
+    min-height:100dvh;display:flex;align-items:center;justify-content:center;
+    overflow-x:hidden;padding:26px 18px;position:relative;
+  }
+
+  /* corazoncitos y huellitas ambientales */
+  .float{position:fixed;pointer-events:none;opacity:.5;animation:rise linear infinite;z-index:0;user-select:none}
+  @keyframes rise{
+    0%{transform:translateY(10vh) rotate(0);opacity:0}
+    12%{opacity:.55}
+    100%{transform:translateY(-115vh) rotate(28deg);opacity:0}
+  }
+
+  .wrap{position:relative;z-index:2;width:min(560px,100%)}
+
+  /* ---------- PANTALLA 1: sobre para abrir ---------- */
+  #gate{text-align:center;animation:pop .7s cubic-bezier(.2,.9,.3,1.2) both}
+  #gate .eyebrow{
+    font-weight:700;font-size:.74rem;letter-spacing:.34em;text-indent:.34em;
+    color:var(--rose-deep);text-transform:uppercase;margin-bottom:20px;
+  }
+  #gate h1{
+    font-family:'Fraunces',serif;font-weight:600;font-size:clamp(2.1rem,8vw,3.4rem);
+    line-height:1.05;color:var(--ink);margin-bottom:14px;
+  }
+  #gate p.sub{font-size:1.02rem;color:var(--soft);margin-bottom:34px}
+
+  .envelope{
+    position:relative;width:min(300px,78vw);aspect-ratio:4/2.9;margin:0 auto 36px;
+    cursor:pointer;filter:drop-shadow(0 18px 30px var(--shadow));
+    transition:transform .3s;
+  }
+  .envelope:hover{transform:translateY(-5px) scale(1.02)}
+  .envelope:active{transform:translateY(-1px) scale(.99)}
+  .env-body{position:absolute;inset:0;background:linear-gradient(160deg,#FBEAD6,#F1D6B8);
+    border-radius:16px;border:2px solid #E7C79E;overflow:hidden}
+  .env-flap{position:absolute;top:0;left:0;right:0;height:56%;
+    background:linear-gradient(160deg,#F6DFC2,#EAC79E);
+    clip-path:polygon(0 0,100% 0,50% 100%);border-radius:16px 16px 0 0;
+    transform-origin:top;transition:transform .5s ease;z-index:3}
+  .env-heart{position:absolute;top:50%;left:50%;transform:translate(-50%,-46%);
+    font-size:2.1rem;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.15))}
+  .env-label{position:absolute;bottom:16px;left:0;right:0;text-align:center;
+    font-family:'Fraunces',serif;font-style:italic;font-size:1.05rem;color:var(--rose-deep);z-index:2}
+  .tap-hint{font-weight:700;font-size:.8rem;letter-spacing:.2em;color:var(--rose-deep);
+    text-transform:uppercase;animation:beat 1.4s ease-in-out infinite}
+  @keyframes beat{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+
+  /* ---------- PANTALLA 2: la sorpresa ---------- */
+  #reveal{display:none}
+  #reveal.show{display:block;animation:pop .8s cubic-bezier(.2,.9,.3,1.2) both}
+  @keyframes pop{from{opacity:0;transform:translateY(22px) scale(.96)}to{opacity:1;transform:none}}
+
+  .card{
+    background:rgba(255,251,244,.82);backdrop-filter:blur(4px);
+    border:2px solid #EED9BE;border-radius:26px;padding:30px 26px 30px;
+    box-shadow:0 24px 60px var(--shadow);text-align:center;
+  }
+  .card .eyebrow{
+    font-weight:800;font-size:.72rem;letter-spacing:.3em;text-indent:.3em;
+    color:var(--leaf);text-transform:uppercase;margin-bottom:12px;
+  }
+  .card h2{
+    font-family:'Fraunces',serif;font-weight:600;font-size:clamp(1.9rem,7vw,2.9rem);
+    line-height:1.08;margin-bottom:8px;color:var(--ink);
+  }
+  .card h2 .em{color:var(--rose-deep);font-style:italic}
+  .card .lead{font-size:1.04rem;color:var(--soft);margin-bottom:22px;line-height:1.5}
+
+  /* perrito */
+  .dog-stage{position:relative;width:200px;height:200px;margin:6px auto 4px;
+    animation:bob 3.4s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+  .dog-stage svg{width:100%;height:100%;overflow:visible}
+  .dog-shadow{position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);
+    width:120px;height:20px;background:radial-gradient(ellipse,rgba(90,70,50,.22),transparent 70%);
+    border-radius:50%;animation:shrink 3.4s ease-in-out infinite}
+  @keyframes shrink{0%,100%{width:120px;opacity:.5}50%{width:96px;opacity:.34}}
+
+  /* selector de raza/color */
+  .picker-label{font-weight:700;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--soft);margin:22px 0 12px}
+  .swatches{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:6px}
+  .swatch{
+    cursor:pointer;border:none;background:var(--cream);border-radius:16px;
+    padding:12px 12px 10px;width:104px;transition:transform .2s, box-shadow .2s;
+    box-shadow:0 3px 0 #E7D3B6, inset 0 0 0 2px transparent;
+  }
+  .swatch:hover{transform:translateY(-3px)}
+  .swatch.active{box-shadow:0 3px 0 #E7D3B6, inset 0 0 0 2px var(--rose-deep)}
+  .swatch .dot{width:38px;height:38px;border-radius:50%;margin:0 auto 8px;
+    box-shadow:inset -4px -5px 0 rgba(0,0,0,.12)}
+  .swatch .nm{font-weight:800;font-size:.78rem;color:var(--ink);line-height:1.1}
+  .swatch .ds{font-weight:600;font-size:.64rem;color:var(--soft)}
+
+  .dog-caption{font-family:'Fraunces',serif;font-style:italic;font-size:1.15rem;
+    color:var(--rose-deep);min-height:1.4em;margin-top:10px}
+
+  /* pistas de la fecha */
+  .divider{display:flex;align-items:center;gap:12px;margin:26px 4px 20px}
+  .divider::before,.divider::after{content:"";flex:1;height:1.5px;
+    background:linear-gradient(90deg,transparent,#E4CDA9,transparent)}
+  .divider span{font-weight:800;font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+
+  .riddle{font-size:1.02rem;color:var(--ink);line-height:1.55;margin-bottom:18px}
+  .clues{display:grid;gap:10px;text-align:left;margin-bottom:22px}
+  .clue{display:flex;gap:12px;align-items:flex-start;background:var(--cream);
+    border-radius:14px;padding:12px 14px;border:1.5px solid #EEDCBF;
+    opacity:0;transform:translateX(-8px);transition:.5s}
+  .clue.in{opacity:1;transform:none}
+  .clue .ic{font-size:1.15rem;line-height:1.5}
+  .clue .tx{font-size:.94rem;color:var(--soft);line-height:1.4}
+  .clue .tx b{color:var(--ink);font-weight:800}
+
+  .guess{margin-top:6px}
+  .guess-q{font-weight:800;font-size:.96rem;color:var(--ink);margin-bottom:12px}
+  .guess-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .guess-row input{
+    font-family:'Nunito',sans-serif;font-weight:700;font-size:1rem;text-align:center;
+    width:130px;padding:12px 10px;border-radius:14px;border:2px solid #E7C79E;
+    background:#FFFBF4;color:var(--ink);outline:none;transition:border .2s}
+  .guess-row input:focus{border-color:var(--rose-deep)}
+  .btn{font-family:'Nunito',sans-serif;font-weight:800;font-size:.92rem;cursor:pointer;
+    border:none;border-radius:14px;padding:12px 22px;color:#fff;
+    background:var(--rose-deep);box-shadow:0 4px 0 #B4535E;transition:transform .12s}
+  .btn:active{transform:translateY(2px);box-shadow:0 2px 0 #B4535E}
+  .guess-feedback{min-height:1.5em;margin-top:14px;font-family:'Fraunces',serif;
+    font-style:italic;font-size:1.1rem;color:var(--leaf);font-weight:500}
+
+  .final{display:none;margin-top:18px;padding-top:20px;border-top:1.5px dashed #E4CDA9}
+  .final.show{display:block;animation:pop .6s ease both}
+  .final .big{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(1.5rem,6vw,2.1rem);
+    color:var(--rose-deep);margin-bottom:8px}
+  .final .small{color:var(--soft);font-size:1rem;line-height:1.5}
+
+  .signoff{margin-top:24px;font-family:'Fraunces',serif;font-style:italic;
+    font-size:1.05rem;color:var(--soft)}
+
+  @media (max-width:380px){ .swatch{width:92px} .dog-stage{width:170px;height:170px} }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- PANTALLA 1 -->
+  <section id="gate">
+    <div class="eyebrow">Para mi Julieta 💌</div>
+    <h1>Amor, ábreme…<br>te tengo una sorpresa</h1>
+    <p class="sub">Respira, sonríe, y toca el sobre 🎁</p>
+
+    <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Abrir la sorpresa">
+      <div class="env-body"></div>
+      <div class="env-flap" id="flap"></div>
+      <div class="env-heart">💗</div>
+      <div class="env-label">ábreme</div>
+    </div>
+
+    <div class="tap-hint">toca aquí 👆</div>
+  </section>
+
+  <!-- PANTALLA 2 -->
+  <section id="reveal">
+    <div class="card">
+      <div class="eyebrow">🐾 sorpresa desbloqueada 🐾</div>
+      <h2>Por fin vas a tener <span class="em">el perrito</span> que tanto quieres</h2>
+      <p class="lead">Sí, mi amor… ¡va en serio! 🥹<br>Y como es tuyo también, tú eliges cómo lo quieres:</p>
+
+      <div class="dog-shadow"></div>
+      <div class="dog-stage">
+        <!-- perrito SVG que cambia con las variables --dog -->
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" id="dogSvg">
+          <!-- cola -->
+          <path id="tail" d="M150 128 q28 -6 30 -30 q-16 10 -30 16z" fill="var(--dog-dark)"/>
+          <!-- cuerpo -->
+          <ellipse cx="100" cy="140" rx="52" ry="42" fill="var(--dog)"/>
+          <!-- patas -->
+          <ellipse cx="80" cy="176" rx="12" ry="9" fill="var(--dog-dark)"/>
+          <ellipse cx="120" cy="176" rx="12" ry="9" fill="var(--dog-dark)"/>
+          <!-- cabeza -->
+          <circle cx="100" cy="90" r="46" fill="var(--dog)"/>
+          <!-- orejas -->
+          <path id="earL" d="M64 60 q-22 -6 -26 26 q-2 26 22 30 q6 -30 20 -44z" fill="var(--dog-ear)"/>
+          <path id="earR" d="M136 60 q22 -6 26 26 q2 26 -22 30 q-6 -30 -20 -44z" fill="var(--dog-ear)"/>
+          <!-- manchas opcionales (vaquita) -->
+          <g id="spots" style="display:none">
+            <path d="M70 78 q-16 4 -14 22 q14 6 24 -4 q-4 -14 -10 -18z" fill="rgba(0,0,0,.72)"/>
+            <ellipse cx="128" cy="112" rx="15" ry="12" fill="rgba(0,0,0,.72)"/>
+            <ellipse cx="112" cy="150" rx="18" ry="14" fill="rgba(0,0,0,.68)"/>
+          </g>
+          <!-- tricolor: cejitas y pecho -->
+          <g id="tri" style="display:none">
+            <ellipse cx="80" cy="70" rx="7" ry="5" fill="#E9B44C"/>
+            <ellipse cx="120" cy="70" rx="7" ry="5" fill="#E9B44C"/>
+            <path d="M100 108 q-14 20 0 40 q14 -20 0 -40z" fill="#F6E7D4"/>
+          </g>
+          <!-- carita -->
+          <ellipse cx="82" cy="88" rx="6" ry="7" fill="#3a2a1c"/>
+          <ellipse cx="118" cy="88" rx="6" ry="7" fill="#3a2a1c"/>
+          <circle cx="84" cy="86" r="2" fill="#fff"/>
+          <circle cx="120" cy="86" r="2" fill="#fff"/>
+          <ellipse cx="100" cy="104" rx="8" ry="6" fill="#3a2a1c"/>
+          <path d="M100 110 q0 10 -9 12 M100 110 q0 10 9 12" stroke="#3a2a1c" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+          <!-- cachetitos -->
+          <circle cx="70" cy="102" r="6" fill="rgba(229,139,147,.5)"/>
+          <circle cx="130" cy="102" r="6" fill="rgba(229,139,147,.5)"/>
+        </svg>
+      </div>
+      <div class="dog-caption" id="dogCaption">un perrito para los dos 🐶</div>
+
+      <div class="picker-label">Elige tu perrito 🎨</div>
+      <div class="swatches" id="swatches">
+        <button class="swatch active" data-key="tricolor">
+          <div class="dot" style="background:linear-gradient(135deg,#C9884E 33%,#5C3A1E 33% 66%,#F6E7D4 66%)"></div>
+          <div class="nm">Tricolor</div>
+          <div class="ds">clásico y tierno</div>
+        </button>
+        <button class="swatch" data-key="vaquita">
+          <div class="dot" style="background:linear-gradient(135deg,#F7F2EA 50%,#2a2a2a 50%)"></div>
+          <div class="nm">Vaquita</div>
+          <div class="ds">blanco y negro</div>
+        </button>
+      </div>
+
+      <div class="divider"><span>¿y cuándo? 🗓️</span></div>
+      <p class="riddle">No te digo la fecha… pero te dejo pistas para que la adivines 😏</p>
+
+      <div class="clues" id="clues">
+        <div class="clue"><span class="ic">🍂</span><span class="tx">El mes es el único que suena a <b>"siete"</b> pero no lo es… le ganó el puesto a julio hace siglos. 🏛️</span></div>
+        <div class="clue"><span class="ic">🔢</span><span class="tx">El día es el resultado de <b>nuestro "shi" al cuadrado</b>, por tres. (1+1 = shi… elévalo y multiplícalo 😏)</span></div>
+        <div class="clue"><span class="ic">♍</span><span class="tx">Ese día todavía mandan las estrellas de <b>Virgo</b>… un día más y ya sería otro signo.</span></div>
+        <div class="clue"><span class="ic">🥚</span><span class="tx">El día es <b>docena exacta</b>, y el mes es el <b>cuadrado de tres</b>. Súmalos y te da nuestro número de la suerte: 21. 🍀</span></div>
+      </div>
+
+      <div class="guess">
+        <div class="guess-q">¿Ya la adivinaste? Escríbela 👇</div>
+        <div class="guess-row">
+          <input id="guessInput" inputmode="numeric" placeholder="día / mes" aria-label="Escribe la fecha">
+          <button class="btn" id="guessBtn">Adivinar</button>
+        </div>
+        <div class="guess-feedback" id="guessFeedback"></div>
+      </div>
+
+      <div class="final" id="final">
+        <div class="big">¡12 de septiembre! 🎉🐾</div>
+        <p class="small">Ese día vamos por nuestro perrito <b id="finalDog">tricolor</b>.<br>
+        Marca el calendario, mi amor… nos vamos a volver papás de un peludito 🥹💗</p>
+      </div>
+
+      <div class="signoff">Con todo mi amor,<br>tu Sebas 🤎</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  /* ---------- ambiente flotante ---------- */
+  const emojis=['💗','🐾','🤎','🐶','✨','🦴'];
+  function spawn(){
+    const s=document.createElement('div');
+    s.className='float';
+    s.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    s.style.left=Math.random()*100+'vw';
+    s.style.fontSize=(14+Math.random()*20)+'px';
+    s.style.animationDuration=(9+Math.random()*8)+'s';
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),17000);
+  }
+  setInterval(spawn,900); for(let i=0;i<5;i++)setTimeout(spawn,i*300);
+
+  /* ---------- abrir el sobre ---------- */
+  const gate=document.getElementById('gate');
+  const reveal=document.getElementById('reveal');
+  const flap=document.getElementById('flap');
+  let opened=false;
+  function openGift(){
+    if(opened)return; opened=true;
+    flap.style.transform='rotateX(180deg)';
+    burst();
+    setTimeout(()=>{
+      gate.style.transition='opacity .5s, transform .5s';
+      gate.style.opacity='0'; gate.style.transform='scale(.9)';
+      setTimeout(()=>{
+        gate.style.display='none';
+        reveal.classList.add('show');
+        setTimeout(revealClues,500);
+        window.scrollTo({top:0,behavior:'smooth'});
+      },450);
+    },650);
+  }
+  document.getElementById('envelope').addEventListener('click',openGift);
+  document.getElementById('envelope').addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();openGift();}
+  });
+
+  /* confeti de corazoncitos al abrir */
+  function burst(){
+    for(let i=0;i<30;i++){
+      const c=document.createElement('div');
+      c.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+      c.style.cssText='position:fixed;left:50%;top:44%;z-index:60;pointer-events:none;font-size:'+(16+Math.random()*18)+'px';
+      document.body.appendChild(c);
+      const ang=Math.random()*Math.PI*2, dist=120+Math.random()*220;
+      const dx=Math.cos(ang)*dist, dy=Math.sin(ang)*dist;
+      c.animate([
+        {transform:'translate(-50%,-50%) scale(.4)',opacity:1},
+        {transform:`translate(${dx}px,${dy}px) scale(1.1) rotate(${Math.random()*360}deg)`,opacity:0}
+      ],{duration:1100+Math.random()*500,easing:'cubic-bezier(.2,.7,.3,1)'});
+      setTimeout(()=>c.remove(),1700);
+    }
+  }
+
+  /* ---------- pistas que aparecen una a una ---------- */
+  function revealClues(){
+    document.querySelectorAll('.clue').forEach((c,i)=>{
+      setTimeout(()=>c.classList.add('in'),i*550);
+    });
+  }
+
+  /* ---------- selector de perrito ---------- */
+  const root=document.documentElement;
+  const spots=document.getElementById('spots');
+  const tri=document.getElementById('tri');
+  const caption=document.getElementById('dogCaption');
+  const finalDog=document.getElementById('finalDog');
+  const styles={
+    tricolor:{dog:'#C9884E',dark:'#A96C38',ear:'#5C3A1E',cap:'un tricolor, clásico y hermoso 🐕',name:'tricolor'},
+    vaquita:{dog:'#F7F2EA',dark:'#E4DCCF',ear:'#2a2a2a',cap:'un vaquita, blanco y negro precioso 🐄🐶',name:'vaquita (blanco y negro)'}
+  };
+  function setDog(key){
+    const s=styles[key];
+    root.style.setProperty('--dog',s.dog);
+    root.style.setProperty('--dog-dark',s.dark);
+    root.style.setProperty('--dog-ear',s.ear);
+    spots.style.display = key==='vaquita' ? 'block':'none';
+    tri.style.display   = key==='tricolor' ? 'block':'none';
+    caption.textContent=s.cap;
+    finalDog.textContent=s.name;
+    document.querySelectorAll('.swatch').forEach(b=>b.classList.toggle('active',b.dataset.key===key));
+  }
+  document.getElementById('swatches').addEventListener('click',e=>{
+    const b=e.target.closest('.swatch'); if(b) setDog(b.dataset.key);
+  });
+  setDog('tricolor');
+
+  /* ---------- adivinar la fecha ---------- */
+  const input=document.getElementById('guessInput');
+  const fb=document.getElementById('guessFeedback');
+  const finalBox=document.getElementById('final');
+  function checkGuess(){
+    const raw=input.value.toLowerCase();
+    const nums=(raw.match(/\d+/g)||[]).map(Number);
+    const has12=nums.includes(12);
+    const has9=nums.includes(9)||/sept/.test(raw);
+    if(has12&&has9){
+      fb.style.color='var(--leaf)';
+      fb.textContent='¡Exacto, mi amor! Lo adivinaste 💗';
+      finalBox.classList.add('show');
+      burst();
+      setTimeout(()=>finalBox.scrollIntoView({behavior:'smooth',block:'center'}),300);
+    }else if(has12||has9){
+      fb.style.color='var(--gold)';
+      fb.textContent='¡Casi casi! Te falta una parte… relee las pistas 😏';
+    }else{
+      fb.style.color='var(--rose-deep)';
+      fb.textContent='Mmm, todavía no… vuelve a las pistas 🐾';
+    }
+  }
+  document.getElementById('guessBtn').addEventListener('click',checkGuess);
+  input.addEventListener('keydown',e=>{if(e.key==='Enter')checkGuess();});
+</script>
+</body>
+</html>
